@@ -58,7 +58,7 @@
                            @forelse($messages as $key => $message)
                            <?php $count++; ?>
                               <li class="chat-item">
-                                 <a  data-bs-toggle="pill" href="#chatbox{{$count+1}}">
+                                 <a class="friend-message-box" data-bs-toggle="pill" href="#chatbox{{$count+1}}" data-friend-id="{{$message['friend_id']}}">
                                     <div class="d-flex align-items-center">
                                        <div class="avatar me-2">
                                           <img src="{{ $message['friend_image'] }}" alt="chatuserimage" class="avatar-50 ">
@@ -90,7 +90,7 @@
                          </div>
                          <?php $count = 0; ?>
                          @foreach($messages as $message)
-                         <?php $count++; ?>
+                           <?php $count++; ?>
                            <div class="tab-pane fade" id="chatbox{{$count+1}}" role="tabpanel">
                               <div class="chat-head">
                                  <header class="d-flex justify-content-between align-items-center bg-white pt-3 pe-3 pb-3">
@@ -165,9 +165,9 @@
                                     </div>
                                  </header>
                               </div>
-                              <div class="chat-content scroller chatContent{{$count}}">
+                              <div class="chat-content scroller chatContent{{$count}} friend-chatbox-{{$message['friend_id']}}">
                                  @foreach($message['conversations'] as $chatText)
-                                    <div class="chat {{ ($chatText['user_id'] != auth()->id()) ? 'chat-left' : 'd-flex other-user'}}">
+                                    <div data-friend-image="{{$message['friend_image']}}" data-message-id="{{$chatText['id']}}" class="chat {{ ($chatText['user_id'] != auth()->id()) ? 'chat-left' : 'd-flex other-user'}}">
                                        <div class="chat-user">
                                           <a class="avatar m-0">
                                           <img src="{{ ($chatText['user_id'] != auth()->id()) ? $message['friend_image'] : $userImage }}" alt="avatar" class="avatar-35 ">
@@ -209,65 +209,7 @@
 
 @section('script')
    <script>
-      $(document).ready(function(){
-         $('#chat-search').on('keyup', function(){
-            var value = $(this).val().toLowerCase();
-            $('#chat-list .chat-item').filter(function(){
-                  $(this).toggle($(this).find('.chat-sidebar-name h6').text().toLowerCase().indexOf(value) > -1);
-            });
-         });
-
-         $('.sendChat').on('click', function(e) {
-            e.preventDefault();
-            
-            var $this = $(this);
-            var messageClass = $this.data('message-class');
-            var chatBox = $this.data('chat-box');
-            var textarea = $('.'+messageClass);
-            var chatMessage = textarea.val();
-            var friendId = $this.data('friend-id');
-            var userImage = '{{$userImage}}'; // replace with actual user image path
-            // console.log(userImage);
-
-            if (textarea.val().trim() === '') {
-               return; // Do nothing if the textarea is empty
-            }
-
-            $.ajax({
-                  url: "{{ route('chat.sendMessage') }}",
-                  type: "POST",
-                  data: {
-                     message: chatMessage,
-                     friend_id: friendId,
-                     _token: "{{ csrf_token() }}"
-                  },
-                  success: function(response) {
-                     toastr.success(response.message);
-
-                     var chatHtml = `
-                        <div class="chat d-flex other-user">
-                              <div class="chat-user">
-                                 <a class="avatar m-0">
-                                    <img src="${userImage}" alt="avatar" class="avatar-35">
-                                 </a>
-                                 <span class="chat-time mt-1"></span>
-                              </div>
-                              <div class="chat-detail">
-                                 <div class="chat-message">
-                                    <p>${response.data.message}</p>
-                                 </div>
-                              </div>
-                        </div>
-                     `;
-
-                     $('.'+chatBox).append(chatHtml);
-                     textarea.val(''); // Clear the textarea
-                  },
-                  error: function(xhr, status, error) {
-                     toastr.error('An error occurred while sending the message.');
-                  }
-            });
-         });
-      });
+      var userImage = '{{$userImage}}';
    </script>
+   <script src="{{ asset('/js/chat.js') }}"></script>
 @endsection

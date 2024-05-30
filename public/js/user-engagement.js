@@ -37,7 +37,7 @@ $(document).ready(function() {
             'elapsed_time': elapsedStored,
             'tab_switch': tabSwitchCounter
         };
-        console.log(updateData);
+        // console.log(updateData);
         $.ajax({
             url: 'store-user-data',
             type: 'POST',
@@ -74,7 +74,7 @@ $(document).ready(function() {
                 localStorage.setItem('storedDate', currentDate);
                 elapsedStored = 0;
             } else {
-                console.log("Same Date - Do nothing");
+                // console.log("Same Date - Do nothing");
             }
             // Update or set start time based on previously stored elapsed time
             startTime = Date.now() - elapsedStored * 1000;

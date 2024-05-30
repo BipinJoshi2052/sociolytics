@@ -68,6 +68,7 @@ Route::get('profile', [ProfileController::class, 'index'])->name('profile');
 //Chat
 Route::get('chat', [ChatController::class, 'index'])->name('chat.index');
 Route::post('send-message', [ChatController::class, 'sendMessage'])->name('chat.sendMessage');
+Route::post('check-message', [ChatController::class, 'checkMessage'])->name('chat.checkMessage');
 //Chat
 
 
